@@ -1,0 +1,74 @@
+﻿@using Domain.Models
+
+@{
+}
+@model UserViewmodel
+
+<div class="text-center ">
+    <h1>Welcome @Model._user.FirstName!</h1>
+    <div class="container w-75 bg-danger">
+        <div class="container d-flex align-items-center w-100 bg-danger">
+            <div class="w-25 m-2 border bg-light">
+                <h1>@Model._user.FirstName @Model._user.LastName</h1> 
+                <i>@Model._user.Gender.ToString()</i> | @Model._user.Birthday.ToString("dd-MM-yyyy")
+            </div>
+            <div>
+                Adress: @Model._user.Street @Model._user.HouseNumber@if(@Model._user.HouseNumberAdditions!=null){@Model._user.HouseNumberAdditions }, @Model._user.City
+            </div>
+            <div>
+                @*If owner of the profile, show button to edit profile*@
+                @if (@Model._user.Email == User.Identity.Name)
+                {
+                    <form action="/Home">
+                        <button type="submit" >Edit Profile</button> 
+                    </form>
+            
+                }
+            </div>
+        </div>
+  
+        @*Tabs*@
+        <ul  class="nav nav-pills m-2 border bg-light">
+		    <li class="active">
+                <a  href="#1a" data-toggle="tab">Player at</a>
+		    </li>
+		    <li>
+                <a href="#2a" data-toggle="tab">Organizes</a>
+		    </li>
+	    </ul>
+        <div class="tab-content clearfix">
+            <div class="m-2 border bg-light tab-pane active" id="1a">
+                Player at: <br/>
+                <select  multiple="multiple" disabled>
+                    @if (Model._user.playerat != null)
+                    {
+                        @foreach (GameNight gamenight in Model._user.playerat)
+                        {
+                            <option onclick="location.href='@Url.Action("GameNight", "Home", new{gamenightid = gamenight.Id})'">
+                                @gamenight.PlayedGame.Name | @gamenight.City | @gamenight.DateTime.ToString("dd-MM-yyyy") | at | @gamenight.DateTime.ToString("HH:mm")
+                            </option>
+                        }
+                    }
+
+                </select>
+            </div>
+            <div class="m-2 border bg-light tab-pane" id="2a">
+                Organizer of: <br/>
+                <select  multiple="multiple" disabled>
+                    @if (Model._user != null)
+                    {
+                        @foreach (GameNight gamenight in Model._gameNights)
+                        {
+                            <option onclick="location.href='@Url.Action("GameNight", "Home", new{gamenightid = gamenight.Id})'">
+                                @gamenight.PlayedGame.Name | @gamenight.City | @gamenight.DateTime.ToString("dd-MM-yyyy") | at | @gamenight.DateTime.ToString("HH:mm")
+                            </option>
+                        }
+                    }
+
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>

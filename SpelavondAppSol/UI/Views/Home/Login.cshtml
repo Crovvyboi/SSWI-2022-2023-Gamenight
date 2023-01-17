@@ -1,0 +1,26 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div class="container d-flex align-items-center justify-content-center w-75 h-100 bg-danger p-5 mt-5 mb-5">
+    <div class="w-50 m-2 border bg-light p-4 d-flex a justify-content-center">
+        <div class="container ">
+
+            <h1>Login</h1>
+            <form class=" border-dark" action="/Home/Login" method="post">
+                Email: </br>
+                <input class="w-100" type="text" name="email" value=""/> </br>
+                Password: </br>
+                <input class="w-100" type="password" name="password" value=""/><br /> <br />
+                <button class="w-100" type="submit">Login</button> <br/>
+            </form> <br/>
+            <button class="w-100" onclick="location.href='@Url.Action("Register", "Home")'">
+                Sign up
+            </button>
+        </div>
+
+    </div>
+</div>
+
+

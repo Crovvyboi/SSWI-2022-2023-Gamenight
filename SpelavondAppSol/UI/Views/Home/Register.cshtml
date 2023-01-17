@@ -1,0 +1,86 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<script>
+    function veganClick(){
+        if(document.getElementById("isvegan").checked == true){
+            document.getElementById("isvegan").value = "true";
+        }
+        else{
+            document.getElementById("isvegan").value = "false";
+        }
+    }
+    function alcClick(){
+        if(document.getElementById("isalcholic").checked == true){
+            document.getElementById("isalcholic").value = "true";
+        }
+        else{
+            document.getElementById("isalcholic").value = "false";
+        }
+    }
+    function nutClick(){
+        if(document.getElementById("hasnuts").checked == true){
+            document.getElementById("hasnuts").value = "true";
+        }
+        else{
+            document.getElementById("hasnuts").value = "false";
+        }
+    }
+</script>
+<div class="container d-flex align-items-center justify-content-center w-75 h-100 bg-danger p-5 mt-5 mb-5">
+    <div class="w-50 m-2 border bg-light p-4 d-flex a justify-content-center">
+        <div class="container ">
+
+            <h1>Register</h1>
+
+            <form action="/Home/Register" method="post">
+                First name: </br>
+                <input type="text" name="FirstName" value="" required/> </br>
+
+                Last name: </br>
+                <input type="text" name="LastName" value="" required/> </br>
+
+                Gender: <br>
+                <select name="gender" required>
+                    <option value=""></option>
+                    <option value="Man">Man</option>
+                    <option value="Woman">Woman</option>
+                    <option value="Non-Binary">Non-binary</option>
+                    <option value="Other">Other</option>
+                </select> <br />
+
+                Email: </br>
+                <input type="text" name="email" value="" required/> </br><br/>
+
+                Home Adress: </br>
+                <div class="border border-dark p-2">
+                    Street: <br />
+                    <input type="text" name="street" value="" required/> <br />
+                    Housenumber: <br />
+                    <input class="" type="number" name="housenumber" value="" required/> Addition: <input style="width:50px;" type="text" name="housenumberaddition" value=""/> <br />
+                    City: <br />
+                    <input type="text" name="city" value="" required/>
+                </div> <br />
+
+                Birthday: <br />
+                <input type="date" name="birthday" value="@DateTime.Now.AddYears(-16)" max="@DateTime.Now.AddYears(-16)" required/> <br /> <br />
+
+                Dietary information:
+                <div class="border border-dark p-2">
+                    <input type="checkbox" id="isvegan" onclick="veganClick()" name="isvegan" value=""> <b>Vegan </b> <br>
+                    <input type="checkbox" id="isalcholic" onclick="alcClick()" name="isalcholic" value=""> <b>Tolerates alcohol </b> <br>
+                    <input type="checkbox" id="hasnuts" onclick="nutClick()" name="hasnuts" value=""> <b>Has nut allergy </b> <br>
+                </div> <br />
+
+
+                Password: </br>
+                <input type="password" name="password" value="" required/> <br /> <br />
+                <button class="end-0" type="submit">Register</button>
+            </form>
+
+        </div>
+    </div>
+</div>
+

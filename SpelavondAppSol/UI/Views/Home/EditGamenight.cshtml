@@ -1,0 +1,169 @@
+﻿@using Domain.Models
+@{
+    
+}
+@model EditGamenightViewModel
+<script type="text/javascript">
+
+    function OnbuttonClick(){
+        if(document.getElementById("isathome").checked == true){
+            document.getElementById("name").value = ""
+            document.getElementById("name").readOnly = true
+       
+            document.getElementById("street").value = "@Model._user.Street"
+            document.getElementById("street").readOnly = true
+
+            document.getElementById("housenumber").value = "@Model._user.HouseNumber"
+            document.getElementById("housenumber").readOnly = true
+
+            if ('@Model._user.HouseNumberAdditions' != null)
+            {
+                document.getElementById("housenumberadd").value = "@Model._user.HouseNumberAdditions"
+                document.getElementById("housenumberadd").readOnly = true
+            }
+            else{
+                document.getElementById("housenumberadd").value = ""
+                document.getElementById("housenumberadd").readOnly = true
+            }
+
+            document.getElementById("city").value = "@Model._user.City"
+            document.getElementById("city").readOnly = true
+        }
+        else{
+            document.getElementById("name").value = ""
+            document.getElementById("name").readOnly = false
+       
+            document.getElementById("street").value = ""
+            document.getElementById("street").readOnly = false
+
+            document.getElementById("housenumber").value = ""
+            document.getElementById("housenumber").readOnly = false
+
+
+            document.getElementById("housenumberadd").value = ""
+            document.getElementById("housenumberadd").readOnly = false
+
+
+            document.getElementById("city").value = ""
+            document.getElementById("city").readOnly = false
+        }
+        
+    }
+
+    function potluckClick(){
+        if(document.getElementById("ispotluck").checked == true){
+            document.getElementById("ispotluck").value = true;
+        }
+        else{
+            document.getElementById("ispotluck").value = false;
+        }
+    }
+
+    function eigteenplusSelect(){
+        if(document.getElementById("iseighteenplus").checked == true){
+            document.getElementById("iseighteenplus").value = true;
+        }
+        else{
+            document.getElementById("iseighteenplus").value = false;
+        }
+    }
+
+</script>
+
+<div class="container d-flex align-items-center justify-content-center w-75 h-100 bg-danger p-5 mt-5 mb-5">
+    <div class="w-50 m-2 border bg-light p-4 d-flex a justify-content-center">
+        <div class="container ">
+            <h1>Edit gamenight</h1>
+            <form action="/api/gamenight/UpdateGamenight" method="post">
+                <input hidden id="gamenightid" name="gamenightid" readonly value="@Model._gameNight.Id" />
+
+                    Adress of play <br />
+                <div class="border border-dark p-2">
+                    <input type="checkbox" id="isathome" name="ishomeadress" onclick="OnbuttonClick()"> Same as home adress </input>
+                    <div id="adressform" >
+                        Building name: <br />
+                        <input type="text" id="name" name="name" value="@Model._gameNight.Name" /> <br />
+                        Street: <br />
+                        <input type="text" id="street" name="street" value="@Model._gameNight.Street" required/> <br />
+                        Housenumber: <br />
+                        <input type="number" id="housenumber" name="housenumber" value="@Model._gameNight.HouseNumber" required/>   Addition: <input style="width:50px;" type="text" id="housenumberadd" name="housenumberadd" value="@Model._gameNight.HouseNumberAdditions"/> <br />
+                        City: <br />
+                        <input type="text" id="city" name="city" value="@Model._gameNight.City" required/>
+                    </div> 
+                </div> <br/>
+                <div>
+                    Date & Time: <br/>
+                    <input type="datetime-local" id="date" name="datetime" value="@Model._gameNight.DateTime.ToString("yyyy-MM-ddTHH:mm:ss")" required/> <br/>
+                </div> <br/>
+                <div>
+                    Game to play: <br />
+                    <select id="gameid" name="gameid" onchange="" required>
+                        @foreach (var game in @Model._games)
+                        {
+
+                                @if (game.EighteenPlus)
+                                {
+                                    @if(game.Id == @Model._gameNight.GameID)
+                                    {
+                                    <option on="eigteenplusSelect()" id="@game.Name" value="@game.Id" selected> 
+                                        @game.Name (18+) 
+                                    </option>
+                                    }
+                                    else
+                                    {
+                                    <option on="eigteenplusSelect()" id="@game.Name" value="@game.Id"> 
+                                        @game.Name (18+) 
+                                    </option>
+                                    }
+
+
+                                } 
+                                else
+                                {
+                                    @if(game.Id == @Model._gameNight.GameID)
+                                    {
+                                    <option onclick="underEigteenSelect()" id="@game.Name" value="@game.Id" selected> 
+                                        @game.Name 
+                                    </option>
+                                    }
+                                    <option onclick="underEigteenSelect()" id="@game.Name" value="@game.Id"> 
+                                        @game.Name 
+                                    </option>
+                                }
+
+                        }
+                    </select>
+                </div> <br/>
+                <div>
+                    Max players (min 2): <br/>
+                    <input type="number" min=2 id="maxplayers" name="maxplayers" value="@Model._gameNight.maxPlayers" required/>
+                </div> <br/>
+                <div>
+                    @if (@Model._gameNight.isPotluck)
+                    {
+                        <input type="checkbox" id="ispotluck" name="ispotluck" onclick="potluckClick()" value="true" checked/> 
+                    }
+                    else
+                    {
+                        <input type="checkbox" id="ispotluck" name="ispotluck" onclick="potluckClick()" value="false"/> 
+                    }
+                    <b>Potluck/BYOB?</b>
+                </div>
+                <div>
+                     
+                    @if (@Model._gameNight.isEighteenPlus)
+                    {
+                        <input type="checkbox" id="iseighteenplus" name="iseighteenplus" onclick="eigteenplusSelect()" value="true" checked/> 
+                    }
+                    else
+                    {
+                        <input type="checkbox" id="iseighteenplus" name="iseighteenplus" onclick="eigteenplusSelect()" value="false"/> 
+                    }
+                    <b>Adults only?</b> <br />
+                <br />
+                </div>
+                <button type="submit">Confirm!</button>
+            </form>
+        </div>
+    </div>
+</div>

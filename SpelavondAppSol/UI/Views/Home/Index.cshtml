@@ -1,0 +1,76 @@
+﻿@using Domain.Models
+@{
+    ViewData["Title"] = "Home Page";
+}
+@model HomeViewModel
+<div class="text-center ">
+
+    <h1 class="display-4">Welcome!</h1>
+    <br />
+
+    @*Create list of gamenights with an onclick link*@
+    @foreach (GameNight gamenight in Model.gameNights)
+    {
+    <div class="container w-75 bg-danger" onclick="location.href='@Url.Action("Gamenight", "Home", new{gamenightid = gamenight.Id})'">
+        
+        <div class="container d-flex align-items-center w-100 bg-danger">
+            <div class="w-25 m-2 border bg-light">
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+            </div>
+            <div class="w-75 bg-light m-3" style="height:100%;">
+                <div class="border border-dark">
+                    @gamenight.PlayedGame.Name <br>
+                    Genre: @gamenight.PlayedGame.Genre <br>
+                    @if (gamenight.isEighteenPlus)
+                    {
+                        <b>18+!</b> <br />
+                    }
+                    else
+                    {
+                        <br />
+                    }
+
+                </div>
+                <div class="border border-dark">
+                    Date & time: @gamenight.DateTime <br>
+                    Organized by: @gamenight.Organizer.FirstName @gamenight.Organizer.LastName <br>
+                    City of play: @gamenight.City
+                </div>
+            </div>
+            <div class="w-25 m-2 bg-light">
+                Max players: @gamenight.maxPlayers <br>
+                Players: <br>
+                <select class="w-75" multiple="multiple" disabled>
+                    @foreach (User user in gamenight.Players)
+                    {
+                        <option onclick="location.href='@Url.Action("UserProfile", "Home", new{userid = user.Id})'">
+                            @user.FirstName @user.LastName
+                        </option>
+                    }
+
+                </select>
+            </div>
+        </div ><br>
+        <div class="container d-flex align-items-center justify-content-center w-75 bg-light border p-2">
+            <div>
+
+            </div>
+            <div class="m-2">
+                @gamenight.PlayedGame.Description
+            </div>
+            <div>
+
+            </div>
+        </div>
+
+    </div> <br />
+
+    }
+</div>           
+                   
+

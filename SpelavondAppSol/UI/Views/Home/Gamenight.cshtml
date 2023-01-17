@@ -1,0 +1,266 @@
+﻿@using Domain.Models
+@{
+}
+@model GamenightViewModel
+<script>
+    function veganClick(){
+        if(document.getElementById("isvegan").checked == true){
+            document.getElementById("isvegan").value = "true";
+        }
+        else{
+            document.getElementById("isvegan").value = "false";
+        }
+    }
+    function alcClick(){
+        if(document.getElementById("isalcholic").checked == true){
+            document.getElementById("isalcholic").value = "true";
+        }
+        else{
+            document.getElementById("isalcholic").value = "false";
+        }
+    }
+    function nutClick(){
+        if(document.getElementById("hasnuts").checked == true){
+            document.getElementById("hasnuts").value = "true";
+        }
+        else{
+            document.getElementById("hasnuts").value = "false";
+        }
+    }
+    function allergiesAlertPotluck(){
+        const response = confirm("The food at the gamenight clashes with your preferences. \n Are you sure you want to participate anyway?");
+
+        if (response) {
+            alert("Alright, just fill in your own");
+            document.getElementById("participatebutton").hidden = true;
+            document.getElementById("foodForm").hidden = false;
+        } else {
+        }
+    }
+    function allergiesAlert(){
+        const response = confirm("The food at the gamenight clashes with your preferences. \n Are you sure you want to participate anyway?");
+
+        if (response) {
+            alert("Alright, please confirm your choice");
+            document.getElementById("participatebutton").hidden = true;
+            document.getElementById("requestbutton").hidden = false;
+        } else {
+        }
+    }
+</script>
+
+<div class="container w-75 bg-danger">
+    <div class="container d-flex align-items-center w-100 bg-danger">
+        @*Game Information*@
+        <div class="w-75 border border-dark p-2 bg-light">
+            Game info:
+            <div>
+                <div>
+                    @if (@Model.gamenight.PlayedGame.EighteenPlus)
+                    {
+                        <div>
+                            @Model.gamenight.PlayedGame.Name  (18+)
+                        </div>
+                        
+                    }
+                    else
+                    {
+                        <div>
+                            @Model.gamenight.PlayedGame.Name 
+                        </div>
+                    }
+                </div>
+            </div>
+            <div>
+                <div>
+                    @Model.gamenight.PlayedGame.Description
+                </div>
+                <div>
+                    Genre: <br />
+                    @Model.gamenight.PlayedGame.Genre <br /> <br />
+                    Game type: <br />
+                    @Model.gamenight.PlayedGame.GameType <br />
+                </div>
+
+            </div>
+            <div>
+                @if (@Model.gamenight.Organizer.Equals(@Model.user))
+                {
+                    <div>
+                        <button onclick="location.href='@Url.Action("EditGamenight", "Home", new{gamenightid = @Model.gamenight.Id})'">Edit Gamenight</button>
+                    </div>
+                }
+            </div>
+        </div> <br />
+        @*Organizer info*@
+        <div class=" border border-dark p-2 bg-light">
+            <table>
+                <tr>
+                    <td>
+                        @Model.gamenight.Organizer.FirstName @Model.gamenight.Organizer.LastName 
+                    </td>
+                    <td onclick="location.href='@Url.Action("UserProfile", "Home", new{userid = Model.gamenight.Organizer.Id})'">
+                        Organizer contact: @Model.gamenight.Organizer.Email
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Adress of play: @if(@Model.gamenight.Name!=null){@Model.gamenight.Name} @Model.gamenight.Street @Model.gamenight.HouseNumber@if(@Model.gamenight.HouseNumberAdditions!=null){@Model.gamenight.HouseNumberAdditions }, @Model.gamenight.City <br />
+                        Date of play: @Model.gamenight.DateTime.ToString("dd-MM-yyyy") | at | @Model.gamenight.DateTime.ToString("HH:mm")
+                    </td>
+                </tr>
+            </table>
+        </div> <br />
+        @*Player list*@
+
+        <div class="border border-dark p-2 bg-light">
+            Players:
+            <select  multiple="multiple" disabled>
+                @if (@Model.gamenight.Players != null)
+                {
+                    @foreach (User user in Model.gamenight.Players)
+                    {
+                        <option onclick="location.href='@Url.Action("UserProfile", "Home", new{userid = user.Id})'">
+                            @user.FirstName @user.LastName | @user.Birthday.ToString("dd-MM-yyyy")
+                        </option>
+                    }
+                }
+            </select>
+        </div> <br />
+        @*Foodstuff list*@
+        <div class="border border-dark p-2 bg-light">
+            <div>
+                <table>
+                    @if (@Model.gamenight.isPotluck)
+                    {
+                        <b>
+                            This night is a potluck! @if (User.Identity.Name.Equals(@Model.gamenight.Organizer.Email) || @Model.gamenight.Players.Any(x => x.Email == User.Identity.Name))
+                            {
+                                @*Organizer or player*@
+                                <button onclick="location.href='@Url.Action("Foodstuff", "Home", @Model.gamenight)'">Add to potluck</button>
+                            }
+                        </b>
+                    }
+                    else
+                    {
+                        <b>
+                            Food will be brought by the organizer! @if (User.Identity.Name.Equals(@Model.gamenight.Organizer.Email))
+                            {
+                                @*Organizer*@
+                                <button onclick="location.href='@Url.Action("Foodstuff", "Home", @Model.gamenight)'">Add Food</button>
+                            }
+                        </b>
+                    }
+                    @if (Model.gamenight.Food != null)
+                    {
+                       @foreach (Foodstuffs food in Model.gamenight.Food)
+                        {
+                            <tr>
+                                <tr>
+                                    <td>
+                                        @food.Name
+                                    </td>
+                                    <td onclick="location.href='@Url.Action("UserProfile", "Home", new{userid = food.BroughtBy.Id})'">
+                                        Brought by: @food.BroughtBy.FirstName   @food.BroughtBy.LastName 
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                       @food.Description
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        @if (food.isVegan)
+                                        {
+                                            <b>Vegan</b><br />
+                                        }
+                                        @if (food.isAlcoholic)
+                                        {
+                                            <b>Alcoholic (18+)</b><br />
+                                        }
+                                        @if (food.nutAlergy)
+                                        {
+                                            <b>Contains (traces of) nuts</b><br />
+                                        }
+                                    </td>
+                                </tr>
+
+                            </tr>
+                        } 
+                    }
+                </table>
+            </div>
+        </div> <br />
+        <div>
+            @*If user email equals organizer id, disband gamenight
+            If user email equals one of the players, remove them from the gamenight
+            If the user is neither, dont show the button*@
+
+            @if (User.Identity.Name.Equals(@Model.gamenight.Organizer.Email))
+            {
+                @*Organizer*@
+                <button onclick="location.href='@Url.Action("Delete", "Gamenight", new{id = @Model.gamenight.Id})'">Cancel gamenight</button>
+            }
+            else if (@Model.gamenight.Players.Any(x => x.Email == User.Identity.Name))
+            {
+                @*Player*@
+                <button onclick="location.href='@Url.Action("RemovePlayer", "Gamenight", new {email = User.Identity.Name, gamenightid = @Model.gamenight.Id})'">Unsubscribe</button>
+            }
+            else if(@Model.gamenight.IsFull())
+            {
+                <button disabled>This gamenight is full!</button>
+            }
+            else if (@Model.gamenight.isPotluck)
+            {
+                @if (@Model.user.isVegan && @Model.gamenight.Food.Any(x => x.isVegan == true) || !@Model.user.toleratesAlcohol && @Model.gamenight.Food.Any(x => x.isAlcoholic == true) || @Model.user.nutAlergy && @Model.gamenight.Food.Any(x => x.nutAlergy == true))
+                {
+                <button id="participatebutton" onclick="allergiesAlertPotluck()">Participate!</button>
+
+           
+                <form hidden id="foodForm" action="/api/gamenight/addplayer" method="post">
+                    <input type="hidden" id="gamenightid" name="gamenightid" readonly value="@Model.gamenight.Id">
+                    <b>Name: <input type="text" id="Name" name="Name" value="" required/> | Description: <input type="text" id="Description" name="Description" value="" required/></b> <br>
+                    <b>Is vegan </b><input type="checkbox" id="isvegan" onclick="veganClick()" name="isvegan" value=""> <br>
+                    <b>Is alcoholic </b><input type="checkbox" id="isalcholic" onclick="alcClick()" name="isalcholic" value=""> <br>
+                    <b>Contains nuts </b><input type="checkbox" id="hasnuts" onclick="nutClick()" name="hasnuts" value=""> <br>
+            
+                    <button type="submit">Participate!</button>
+                </form>
+                }
+                else
+                {
+                <form action="/api/gamenight/addplayer" method="post">
+                    <input type="hidden" id="gamenightid" name="gamenightid" readonly value="@Model.gamenight.Id">
+                    <b>Name: <input type="text" id="Name" name="Name" value="" required/> | Description: <input type="text" id="Description" name="Description" value="" required/></b> <br>
+                    <b>Is vegan </b><input type="checkbox" id="isvegan" onclick="veganClick()" name="isvegan" value=""> <br>
+                    <b>Is alcoholic </b><input type="checkbox" id="isalcholic" onclick="alcClick()" name="isalcholic" value=""> <br>
+                    <b>Contains nuts </b><input type="checkbox" id="hasnuts" onclick="nutClick()" name="hasnuts" value=""> <br>
+            
+                    <button type="submit">Participate!</button>
+                </form>
+                }
+
+            }
+            else if (@Model.user.isVegan && @Model.gamenight.Food.Any(x => x.isVegan == true) || !@Model.user.toleratesAlcohol && @Model.gamenight.Food.Any(x => x.isAlcoholic == true) || @Model.user.nutAlergy && @Model.gamenight.Food.Any(x => x.nutAlergy == true))
+            {
+                // Allergies, but no potluck
+                <button id="participatebutton" onclick="allergiesAlert()">Participate!</button>
+
+                <form hidden id="requestbutton" action="/api/gamenight/addplayer" method="post">
+                    <input type="hidden" id="gamenightid" name="gamenightid" readonly value="@Model.gamenight.Id">
+            
+                    <button type="submit">Confirm participation!</button>
+                </form>
+            }
+            else
+            {
+                <form action="/api/gamenight/addplayer" method="post">
+                    <input type="hidden" id="gamenightid" name="gamenightid" readonly value="@Model.gamenight.Id">
+            
+                    <button type="submit">Participate!</button>
+                </form>
+            }
+        </div>
+    </div>
+</div>

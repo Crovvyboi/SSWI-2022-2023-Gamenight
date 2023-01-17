@@ -1,0 +1,134 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model NewGamenightViewmodel
+<script type="text/javascript">
+
+    function OnbuttonClick(){
+        if(document.getElementById("isathome").checked == true){
+            document.getElementById("name").value = ""
+            document.getElementById("name").readOnly = true
+       
+            document.getElementById("street").value = "@Model._user.Street"
+            document.getElementById("street").readOnly = true
+
+            document.getElementById("housenumber").value = "@Model._user.HouseNumber"
+            document.getElementById("housenumber").readOnly = true
+
+            if ('@Model._user.HouseNumberAdditions' != null)
+            {
+                document.getElementById("housenumberadd").value = "@Model._user.HouseNumberAdditions"
+                document.getElementById("housenumberadd").readOnly = true
+            }
+            else{
+                document.getElementById("housenumberadd").value = ""
+                document.getElementById("housenumberadd").readOnly = true
+            }
+
+            document.getElementById("city").value = "@Model._user.City"
+            document.getElementById("city").readOnly = true
+        }
+        else{
+            document.getElementById("name").value = ""
+            document.getElementById("name").readOnly = false
+       
+            document.getElementById("street").value = ""
+            document.getElementById("street").readOnly = false
+
+            document.getElementById("housenumber").value = ""
+            document.getElementById("housenumber").readOnly = false
+
+
+            document.getElementById("housenumberadd").value = ""
+            document.getElementById("housenumberadd").readOnly = false
+
+
+            document.getElementById("city").value = ""
+            document.getElementById("city").readOnly = false
+        }
+        
+    }
+
+    function potluckClick(){
+        if(document.getElementById("ispotluck").checked == true){
+            document.getElementById("ispotluck").value = true;
+        }
+        else{
+            document.getElementById("ispotluck").value = false;
+        }
+    }
+
+    function eigteenplusSelect(){
+        if(document.getElementById("iseighteenplus").checked == true){
+            document.getElementById("iseighteenplus").value = true;
+        }
+        else{
+            document.getElementById("iseighteenplus").value = false;
+        }
+    }
+</script>
+<div class="container d-flex align-items-center justify-content-center w-75 h-100 bg-danger p-5 mt-5 mb-5">
+    <div class="w-50 m-2 border bg-light p-4 d-flex a justify-content-center">
+        <div class="container ">
+            <h1>Organize a gamenight!</h1><br />
+            <form action="/api/gamenight/CreateGameNight" method="post">
+
+                
+                Adress of play <br />
+                <div class="border border-dark p-2">
+                    <input type="checkbox" id="isathome" name="ishomeadress" onclick="OnbuttonClick()"><b> Same as home adress </b></input>
+                    <div id="adressform" >
+                        Building name: <br />
+                        <input type="text" id="name" name="name" value="" /> <br />
+                        Street: <br />
+                        <input type="text" id="street" name="street" value="" required/> <br />
+                        Housenumber: <br />
+                        <input type="number" id="housenumber" name="housenumber" value="" required/>   Addition: <input style="width:50px;" type="text" id="housenumberadd" name="housenumberadd" value=""/> <br />
+                        City: <br />
+                        <input type="text" id="city" name="city" value="" required/>
+                    </div> <br/>
+                </div><br />
+                <div>
+                    Date & Time: <br/>
+                    <input type="datetime-local" id="date" name="datetime" required/> <br/>
+                </div> <br/>
+                <div>
+                    Game to play: <br />
+                    <select id="gameid" name="gameid" onchange="" required>
+                        @foreach (var game in @Model._games)
+                        {
+
+                                @if (game.EighteenPlus)
+                                {
+                                    <option on="eigteenplusSelect()" value="@game.Id"> 
+                                        @game.Name (18+) 
+                                    </option>
+
+                                } 
+                                else
+                                {
+                                    <option onclick="underEigteenSelect()" value="@game.Id"> 
+                                        @game.Name 
+                                    </option>
+                                }
+
+                        }
+                    </select>
+                </div> <br/>
+                <div>
+                    Max players (min 2): <br/>
+                    <input type="number" min=2 id="maxplayers" name="maxplayers" required/>
+                </div> <br/>
+                <div>
+                    <input type="checkbox" id="ispotluck" name="ispotluck" onclick="potluckClick()" value="" /><b> Potluck/BYOB? </b> <br />
+                </div>
+                <div>
+                    <input type="checkbox" id="iseighteenplus" name="iseighteenplus" onclick="eigteenplusSelect()" value="" /><b> Adults only? </b>  <br />
+            
+                </div><br />
+                <button type="submit">Confirm!</button>
+            </form>
+        </div>
+    </div>
+</div>
+
