@@ -1,0 +1,97 @@
+﻿@using Domain.Models
+@using Microsoft.AspNetCore.Components
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model FoodstuffViewmodel
+
+<script>
+    function veganClick(){
+        if(document.getElementById("isvegan").checked == true){
+            document.getElementById("isvegan").value = "true";
+        }
+        else{
+            document.getElementById("isvegan").value = "false";
+        }
+    }
+    function alcClick(){
+        if(document.getElementById("isalcholic").checked == true){
+            document.getElementById("isalcholic").value = "true";
+        }
+        else{
+            document.getElementById("isalcholic").value = "false";
+        }
+    }
+    function nutClick(){
+        if(document.getElementById("hasnuts").checked == true){
+            document.getElementById("hasnuts").value = "true";
+        }
+        else{
+            document.getElementById("hasnuts").value = "false";
+        }
+    }
+</script>
+
+<div>
+    @foreach (Foodstuffs foodstuffs in @Model._food)
+    {
+
+            @if (@foodstuffs.BroughtBy.Email.Equals(User.Identity.Name))
+            {        
+                <form action="/api/gamenight/updatefood" method="post">
+                    <input type="hidden" id="gamenightid" name="gamenightid" readonly value="@Model._gamenightid.Id"/>
+                    <input type="hidden" id="foodstuffid" name="foodstuffid" readonly value="@foodstuffs.id"/>
+
+                    <b>Name: <input type="text" id="Name" name="Name" value="@foodstuffs.Name"/> | Description: <input type="text" id="Description" name="Description" value="@foodstuffs.Description"/></b> <br>
+                    @if (@foodstuffs.isVegan)
+                    {
+                        <b>Is vegan </b><input type="checkbox" id="isvegan" onclick="veganClick()" name="isvegan" value="true" checked>  <br>
+                    }
+                    else
+                    {
+                        <b>Is vegan </b><input type="checkbox" id="isvegan" onclick="veganClick()" name="isvegan" value="false">  <br>
+                    }
+                    @if (@foodstuffs.isAlcoholic)
+                    {
+                        <b>Is alcoholic </b><input type="checkbox" id="isalcholic" onclick="alcClick()" name="isalcholic" value="true" checked> <br>
+                    }
+                    else
+                    {
+                        <b>Is alcoholic </b><input type="checkbox" id="isalcholic" onclick="alcClick()" name="isalcholic" value="false"> <br>
+                    }
+                    @if (@foodstuffs.nutAlergy)
+                    {
+                        <b>Contains nuts </b><input type="checkbox" id="hasnuts" onclick="nutClick()" name="hasnuts" value="true" checked> <br>
+                    }
+                    else
+                    { 
+                        <b>Contains nuts </b><input type="checkbox" id="hasnuts" onclick="nutClick()" name="hasnuts" value="false"> <br>
+                    }
+                    @foodstuffs.BroughtBy.FirstName @foodstuffs.BroughtBy.LastName <br/>
+
+                    <button type="submit">Edit Foodstuff</button> 
+                </form> <br/>
+            }
+            else
+            {
+                <b>Name: @foodstuffs.Name |Description: @foodstuffs.Description </b> <br/>
+                @foodstuffs.BroughtBy.FirstName @foodstuffs.BroughtBy.LastName <br/>
+            }
+
+    }
+    @if (!@Model._food.Any(x => x.BroughtBy.Email.Equals(User.Identity.Name)))
+    {
+        <form action="/api/gamenight/addfood" method="post">
+            <input type="hidden" id="gamenightid" name="gamenightid" readonly value="@Model._gamenightid.Id"/>
+            <b>Name: <input type="text" id="Name" name="Name" value=""/> | Description: <input type="text" id="Description" name="Description" value=""/></b> <br>
+            <b>Is vegan </b><input type="checkbox" id="isvegan" onclick="veganClick()" name="isvegan" value=""> <br>
+            <b>Is alcoholic </b><input type="checkbox" id="isalcholic" onclick="alcClick()" name="isalcholic" value=""> <br>
+            <b>Contains nuts </b><input type="checkbox" id="hasnuts" onclick="nutClick()" name="hasnuts" value=""> <br>
+            
+            <button type="submit">Add Food</button>
+        </form>    
+
+    }
+</div>

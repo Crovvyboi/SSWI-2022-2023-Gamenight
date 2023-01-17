@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Spelavond</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/bootstrap.css" />
+
+</head>
+<body class="bg-dark">
+    <header class="sticky-top " >
+        <nav class=" navbar-light bg-white border-bottom box-shadow">
+            <div class="container-fluid border-bottom border-secondary" style="height:100px;">
+                <div class="row h-100 align-middle ">
+                    <div class="col-2"></div>
+                    <div class="col-2 bg-primary h-100 d-flex align-items-center justify-content-center" onclick="location.href='@Url.Action("Index", "Home")'">
+                        <a class="nav-link text-dark text-end " >Home</a>
+                    </div>
+                    <div class="col-4 h-100 d-flex align-items-center justify-content-center" onclick="location.href='@Url.Action("Index", "Home")'">
+                        <a class="nav-link text-dark " >Gamenight!</a>
+                    </div>
+                    <div class="col-2 bg-primary h-100 d-flex align-items-center justify-content-center" onclick="location.href='@Url.Action("CreateGameNight", "Home")'">
+                        <a class="nav-link text-dark text-start">Organize Gamenight</a>
+                    </div>
+                    <div class="col-2 h-100 d-flex align-items-center justify-content-center"> 
+                        @*Login/Registration*@
+                        <div>
+                            @if (User.Identity.Name != null) {            
+                                <div class="h-100">
+                                    <div class="row border">
+                                        <div  onclick="location.href='@Url.Action("CurrentUserProfile", "Home", new{email = @User.Identity.Name})'">
+                                            Logged in as: <br>
+                                            @User.Identity.Name <br/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <button onclick="location.href='@Url.Action("Logout", "Home")'">
+                                            Log out
+                                        </button>
+                                    </div>
+
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="h-100">
+                                    <div class="row ">
+                                        <button  onclick="location.href='@Url.Action("Login", "Home")'">
+                                        Login
+                                        </button> 
+                                    </div> <br>
+                                    <div class="row">
+                                        <button  onclick="location.href='@Url.Action("Register", "Home")'">
+                                            Sign up
+                                        </button>
+                                    </div>
+
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container d-flex align-items-center justify-content-center">
+        <div class="h-100 w-100 bg-primary">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+
+    <footer class="border-top footer text-muted bg-light">
+        <div class="container">
+            &copy; 2022 - Gamenight! - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>
